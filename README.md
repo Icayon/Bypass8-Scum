@@ -1,4 +1,4 @@
-# Bypass8
+# 💻 Bypass8 💻
 
 <p align="center">
   <img src="https://readme-typing-svg.herokuapp.com?font=Courier+New&weight=700&size=35&pause=1000&color=BDA36A&center=true&vCenter=true&width=600&lines=INITIATING+BYPASS...;SCANNING+BUNKER+PROTOCOLS...;CALCULATING+256+COMBOS...;ACCESS+GRANTED+BY+Bypass8" alt="Typing SVG" />
