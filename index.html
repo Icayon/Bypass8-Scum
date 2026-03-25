@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Bunker Hacker Ultra - Solucionador Real</title>
+    <style>
+        :root { --gold: #bda36a; --bg: #121212; --green: #00ff41; --red: #ff4444; --blue: #44ffff; }
+        body { background: var(--bg); color: white; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .machine { background: #222; border: 5px solid #444; padding: 25px; border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.7); width: 550px; }
+        .header-section { display: flex; gap: 10px; margin-bottom: 20px; }
+        .display { background: #000; border: 2px solid var(--gold); padding: 8px; text-align: center; flex: 1; }
+        .display label { display: block; font-size: 10px; color: var(--gold); margin-bottom: 5px; }
+        input { background: #111; border: 1px solid #444; color: var(--green); padding: 8px; width: 80%; text-align: center; font-size: 18px; outline: none; }
+        input.red-t { color: var(--red); } input.blue-t { color: var(--blue); }
+        .row { display: grid; grid-template-columns: 40px 1fr 1fr 80px; gap: 10px; align-items: center; margin-bottom: 8px; background: #2a2a2a; padding: 5px; border-radius: 4px; }
+        .led { width: 22px; height: 22px; background: #311; border-radius: 4px; margin: auto; border: 1px solid #000; }
+        .led.on { background: var(--green); box-shadow: 0 0 15px var(--green); }
+        button { width: 100%; padding: 20px; background: var(--gold); border: none; color: black; font-weight: bold; font-size: 20px; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
+        #msg { text-align: center; margin-top: 15px; font-weight: bold; font-size: 18px; min-height: 25px; }
+        .config { margin-bottom: 15px; font-size: 12px; color: #aaa; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="machine">
+    <div class="header-section">
+        <div class="display"><label>INPUT</label><input type="text" id="inp" value="240"></div>
+        <div class="display"><label>GOAL A (RED)</label><input type="text" id="ga" value="175" class="red-t"></div>
+        <div class="display"><label>GOAL B (BLUE)</label><input type="text" id="gb" value="100" class="blue-t"></div>
+    </div>
+
+    <div class="config">
+        ORDEN DE PROCESO: 
+        <select id="order" style="background:#000; color:#fff; border:1px solid var(--gold);">
+            <option value="up">DEL 8 AL 1 (ARRIBA -> ABAJO)</option>
+            <option value="down" selected>DEL 1 AL 8 (ABAJO -> ARRIBA)</option>
+        </select>
+    </div>
+
+    <div id="rows-container">
+        <script>
+            for(let i=7; i>=0; i--) {
+                document.write(`
+                    <div class="row">
+                        <span style="color:#666; text-align:center;">${i+1}</span>
+                        <input type="text" id="r${i}a" class="red-t" placeholder="+0">
+                        <input type="text" id="r${i}b" class="blue-t" placeholder="+0">
+                        <div id="l${i}" class="led"></div>
+                    </div>
+                `);
+            }
+        </script>
+    </div>
+
+    <button onclick="solve()">CALCULAR BYPASS</button>
+    <div id="msg"></div>
+</div>
+
+<script>
+function apply(v, op) {
+    let s = op.trim().toLowerCase().replace('x', '*');
+    if(!s || s === '0') return v;
+    if(!isNaN(s)) return v + parseFloat(s);
+    try { return new Function('v', `return v ${s}`)(v); } catch(e) { return v; }
+}
+
+function solve() {
+    const input = parseFloat(document.getElementById('inp').value);
+    const goalA = parseFloat(document.getElementById('ga').value);
+    const goalB = parseFloat(document.getElementById('gb').value);
+    const order = document.getElementById('order').value;
+    const msg = document.getElementById('msg');
+    
+    let ops = [];
+    for(let i=0; i<8; i++) {
+        ops.push({ a: document.getElementById(`r${i}a`).value, b: document.getElementById(`r${i}b`).value });
+        document.getElementById(`l${i}`).className = 'led';
+    }
+
+    for(let i=0; i<256; i++) {
+        let curA = input; let curB = input;
+        let sequence = (order === 'down') ? [0,1,2,3,4,5,6,7] : [7,6,5,4,3,2,1,0];
+
+        for(let j of sequence) {
+            if((i >> j) & 1) {
+                curA = apply(curA, ops[j].a);
+                curB = apply(curB, ops[j].b);
+            }
+        }
+
+        if(Math.round(curA) === goalA && Math.round(curB) === goalB) {
+            msg.innerText = "ACCESO CONCEDIDO"; msg.style.color = "var(--green)";
+            for(let j=0; j<8; j++) if((i >> j) & 1) document.getElementById(`l${j}`).className = 'led on';
+            return;
+        }
+    }
+    msg.innerText = "ERROR: SIN SOLUCIÓN"; msg.style.color = "var(--red)";
+}
+</script>
+</body>
+</html>
