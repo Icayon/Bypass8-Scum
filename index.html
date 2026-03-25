@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Bypass8 - SCUM Bunker Solver</title>
@@ -29,7 +30,7 @@
             border: 5px solid #444;
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 0 40px rgba(0,0,0,0.7);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
             width: 500px;
         }
 
@@ -68,8 +69,13 @@
             outline: none;
         }
 
-        input.red-text { color: var(--red); }
-        input.blue-text { color: var(--blue); }
+        input.red-text {
+            color: var(--red);
+        }
+
+        input.blue-text {
+            color: var(--blue);
+        }
 
         .row {
             display: grid;
@@ -82,7 +88,12 @@
             border-radius: 4px;
         }
 
-        .sw-num { color: #888; font-size: 12px; text-align: center; font-weight: bold; }
+        .sw-num {
+            color: #888;
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
 
         .led {
             width: 22px;
@@ -113,7 +124,9 @@
             border-radius: 4px;
         }
 
-        button:hover { background: #d1b883; }
+        button:hover {
+            background: #d1b883;
+        }
 
         #msg {
             text-align: center;
@@ -131,100 +144,102 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="machine">
-    <div class="header-section">
-        <div class="display">
-            <label>Input</label>
-            <input type="text" id="inp" value="240">
+    <div class="machine">
+        <div class="header-section">
+            <div class="display">
+                <label>Input</label>
+                <input type="text" id="inp" value="240">
+            </div>
+            <div class="display">
+                <label>Goal Red (A)</label>
+                <input type="text" id="ga" value="175" class="red-text">
+            </div>
+            <div class="display">
+                <label>Goal Blue (B)</label>
+                <input type="text" id="gb" value="100" class="blue-text">
+            </div>
         </div>
-        <div class="display">
-            <label>Goal Red (A)</label>
-            <input type="text" id="ga" value="175" class="red-text">
-        </div>
-        <div class="display">
-            <label>Goal Blue (B)</label>
-            <input type="text" id="gb" value="100" class="blue-text">
-        </div>
-    </div>
 
-    <div id="rows-container">
-        <script>
-            for(let i=7; i>=0; i--) {
-                document.write(`
+        <div id="rows-container">
+            <script>
+                for (let i = 7; i >= 0; i--) {
+                    document.write(`
                     <div class="row">
-                        <span class="sw-num">SW ${i+1}</span>
+                        <span class="sw-num">SW ${i + 1}</span>
                         <input type="text" id="r${i}a" class="red-text" placeholder="+0">
                         <input type="text" id="r${i}b" class="blue-text" placeholder="+0">
                         <div id="l${i}" class="led"></div>
                     </div>
                 `);
-            }
-        </script>
+                }
+            </script>
+        </div>
+
+        <button onclick="solve()">CALCULATE BYPASS</button>
+        <div id="msg"></div>
+
+        <div class="footer-info">
+            Sequential Logic: TOP (SW8) → BOTTOM (SW1)<br>
+            Bypass8 v1.0 - SCUM Specialized Tool
+        </div>
     </div>
 
-    <button onclick="solve()">CALCULAR BYPASS</button>
-    <div id="msg"></div>
-
-    <div class="footer-info">
-        Lógica Secuencial: ARRIBA (SW8) → ABAJO (SW1)<br>
-        Bypass8 v1.0 - SCUM Specialized Tool
-    </div>
-</div>
-
-<script>
-function op(v, s) {
-    s = s.trim().toLowerCase().replace('x', '*');
-    if(!s || s === '0') return v;
-    if(!isNaN(s)) return v + parseFloat(s);
-    try { 
-        return new Function('v', `return v ${s}`)(v); 
-    } catch(e) { return v; }
-}
-
-function solve() {
-    const input = parseFloat(document.getElementById('inp').value);
-    const goalA = parseFloat(document.getElementById('ga').value);
-    const goalB = parseFloat(document.getElementById('gb').value);
-    const msg = document.getElementById('msg');
-    
-    let rows = [];
-    for(let i=0; i<8; i++) {
-        rows.push({
-            a: document.getElementById(`r${i}a`).value,
-            b: document.getElementById(`r${i}b`).value
-        });
-        document.getElementById(`l${i}`).className = 'led';
-    }
-
-    // Probar las 256 combinaciones
-    for(let i=0; i<256; i++) {
-        let curA = input;
-        let curB = input;
-
-        // EJECUCIÓN SIEMPRE DE ARRIBA (7) A ABAJO (0)
-        for(let j=7; j>=0; j--) {
-            if((i >> j) & 1) {
-                curA = op(curA, rows[j].a);
-                curB = op(curB, rows[j].b);
-            }
+    <script>
+        function op(v, s) {
+            s = s.trim().toLowerCase().replace('x', '*');
+            if (!s || s === '0') return v;
+            if (!isNaN(s)) return v + parseFloat(s);
+            try {
+                return new Function('v', `return v ${s}`)(v);
+            } catch (e) { return v; }
         }
 
-        if(Math.round(curA) === goalA && Math.round(curB) === goalB) {
-            msg.innerText = "ACCESO CONCEDIDO";
-            msg.style.color = "var(--green)";
-            for(let j=0; j<8; j++) {
-                if((i >> j) & 1) document.getElementById(`l${j}`).className = 'led on';
+        function solve() {
+            const input = parseFloat(document.getElementById('inp').value);
+            const goalA = parseFloat(document.getElementById('ga').value);
+            const goalB = parseFloat(document.getElementById('gb').value);
+            const msg = document.getElementById('msg');
+
+            let rows = [];
+            for (let i = 0; i < 8; i++) {
+                rows.push({
+                    a: document.getElementById(`r${i}a`).value,
+                    b: document.getElementById(`r${i}b`).value
+                });
+                document.getElementById(`l${i}`).className = 'led';
             }
-            return;
+
+            // Try all 256 combinations
+            for (let i = 0; i < 256; i++) {
+                let curA = input;
+                let curB = input;
+
+                // ALWAYS EXECUTE FROM TOP (7) TO BOTTOM (0)
+                for (let j = 7; j >= 0; j--) {
+                    if ((i >> j) & 1) {
+                        curA = op(curA, rows[j].a);
+                        curB = op(curB, rows[j].b);
+                    }
+                }
+
+                if (Math.round(curA) === goalA && Math.round(curB) === goalB) {
+                    msg.innerText = "ACCESS GRANTED";
+                    msg.style.color = "var(--green)";
+                    for (let j = 0; j < 8; j++) {
+                        if ((i >> j) & 1) document.getElementById(`l${j}`).className = 'led on';
+                    }
+                    return;
+                }
+            }
+
+            msg.innerText = "INVALID DATA";
+            msg.style.color = "var(--red)";
         }
-    }
-    
-    msg.innerText = "DATOS INVÁLIDOS";
-    msg.style.color = "var(--red)";
-}
-</script>
+    </script>
 
 </body>
+
 </html>
