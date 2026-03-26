@@ -25,7 +25,7 @@
 
 ## 🕹️ CÓMO SE USA (PARA DUMMIES)
 
-1.  **Entra aquí:** 👉 [https://icayon.github.io/Bypass8-Scum/](https://icayon.github.io/Bypass8-Scum/)
+1.  **Entra aquí:** 👉 [https://icayon.github.io/Bypass8-Scum/](https://icayon.github.io/Bypass8_Scum/)
 2.  Mira el panel de la puerta.
 3.  Escribe el **Input**, los dos **Goals** y las operaciones de cada interruptor (si no hay nada, déjalo vacío).
 4.  Pulsa **CALCULAR**.
